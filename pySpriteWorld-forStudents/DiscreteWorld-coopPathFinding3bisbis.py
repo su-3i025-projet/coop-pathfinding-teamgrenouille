@@ -32,7 +32,7 @@ def init(_boardname=None):
     global player,game
     # pathfindingWorld_MultiPlayer4
     #name = _boardname if _boardname is not None else 'pathfindingWorld_MultiPlayer_6x6'
-    name = _boardname if _boardname is not None else 'pathfindingWorld_MultiPlayer_labyrinthe3'
+    name = _boardname if _boardname is not None else 'pathfindingWorld_MultiPlayer_incroyable'
     game = Game('Cartes/' + name + '.json', SpriteBuilder)
     game.O = Ontology(True, 'SpriteSheet-32x32/tiny_spritesheet_ontology.csv')
     game.populate_sprite_names(game.O)
@@ -79,12 +79,12 @@ def main():
             for t in range (iterations+1):
                 reservations[((r,c),t)] = -1
     
-    wallStates.append((6,0))
-    wallStates.append((6,1))
-    wallStates.append((6,2))
-    wallStates.append((6,3))
-    wallStates.append((6,4))
-    wallStates.append((6,5))
+#    wallStates.append((6,0))
+#    wallStates.append((6,1))
+#    wallStates.append((6,2))
+#    wallStates.append((6,3))
+#    wallStates.append((6,4))
+#    wallStates.append((6,5))
     
 
     for i in range(game.spriteBuilder.rowsize):
