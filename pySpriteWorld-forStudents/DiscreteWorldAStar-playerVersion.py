@@ -16,13 +16,17 @@ import random
 import numpy as np
 import sys
 
+from projet import *
+import copy
+import heapq
+import functools
+import time
 
 # ---- ---- ---- ---- ---- ----
 # ---- Misc                ----
 # ---- ---- ---- ---- ---- ----
 
-
-
+# Voir fichier projet.py
 
 # ---- ---- ---- ---- ---- ----
 # ---- Main                ----
@@ -75,10 +79,36 @@ def main():
     # Building the best path with A*
     #-------------------------------
     
+    p = Probleme(initStates[0],goalStates[0],wallStates,'manhattan')
+    list = astar(p)
+    for n in reversed(list):
+        next_row,next_col = n.etat
+        player.set_rowcol(next_row,next_col)
+        print ("pos 1:",next_row,next_col)
+        game.mainiteration()
+        if (next_row,next_col)==goalStates[0]:
+            o = game.player.ramasse(game.layers)
+            game.mainiteration()
+            print ("Objet trouvé!", o)
 
-    
-    
-        
+    # On place l'objet au centre de la carte
+    depart = (next_row,next_col)
+    #centre = (10,10)
+    centre = (game.spriteBuilder.rowsize/2,game.spriteBuilder.colsize/2)
+    p = Probleme(depart,centre,wallStates,'manhattan')
+    list = astar(p)
+    for n in reversed(list):
+        next_row,next_col = n.etat
+        player.set_rowcol(next_row,next_col)
+        print ("pos 1:",next_row,next_col)
+        game.mainiteration()
+        if (next_row,next_col)==centre:
+            o = game.player.depose(game.layers)
+            game.mainiteration()
+            print ("Objet déposé au centre de la carte !", o)
+
+    pygame.quit()
+     
     #-------------------------------
     # Moving along the path
     #-------------------------------
@@ -112,13 +142,13 @@ def main():
             game.mainiteration()
             print ("Objet trouvé!", o)
             break
-        '''
+        
         #x,y = game.player.get_pos()
     
-        '''
+        
 
     pygame.quit()
-    
+
         
     
    
