@@ -31,8 +31,9 @@ game = Game()
 def init(_boardname=None):
     global player,game
     # pathfindingWorld_MultiPlayer4
-    #name = _boardname if _boardname is not None else 'pathfindingWorld_MultiPlayer_6x6'
     name = _boardname if _boardname is not None else 'pathfindingWorld_MultiPlayer3'
+    #name = _boardname if _boardname is not None else 'pathfindingWorld_MultiPlayer_6x6'
+    #name = _boardname if _boardname is not None else 'pathfindingWorld_MultiPlayer_bomberman'
     game = Game('Cartes/' + name + '.json', SpriteBuilder)
     game.O = Ontology(True, 'SpriteSheet-32x32/tiny_spritesheet_ontology.csv')
     game.populate_sprite_names(game.O)
@@ -78,14 +79,6 @@ def main():
         for c in range (game.spriteBuilder.colsize+1):
             for t in range (iterations+1):
                 reservations[((r,c),t)] = -1
-    
-    wallStates.append((6,0))
-    wallStates.append((6,1))
-    wallStates.append((6,2))
-    wallStates.append((6,3))
-    wallStates.append((6,4))
-    wallStates.append((6,5))
-    
 
     for i in range(game.spriteBuilder.rowsize):
         wallStates.append((game.spriteBuilder.rowsize,i))
@@ -171,16 +164,25 @@ def main():
     collisions = list(wallStates)
     #tototata = wallStates
     #print("collisions wallStates = ",collisions)
-    chemins = []
+    chemins = [[] for j in range(nbPlayers)]
+    '''
     for j in range(nbPlayers):
         vide = []
         chemins.append(vide)
+    '''
 
     print("CHEMINS INITIAUX =",chemins)
     print("ROW = ",game.spriteBuilder.rowsize)
     print("COL = ",game.spriteBuilder.colsize)
 
     #print(reservations)
+
+    collisionsJ = [[] for _ in range(nbPlayers)]
+    print(collisionsJ)
+    '''
+    for j in range(nbPlayers):
+        collisionsJ.append(wallStates)
+    '''
 
     pause = [0]*nbPlayers
     print("pause=",pause)
@@ -189,17 +191,32 @@ def main():
         print("Joueur = ",j)
         for t in range (iterations):
             #reservations[((wallStates[i]),t)] = 1
-            #wallStates = tototata
+            collisionsJ[j] = list(wallStates)
+            for p in range(nbPlayers):
+                if p != j:
+                    #if fioles[p] == initStates[p]:
+                    if reservations[(fioles[p],t)] != -1 and reservations[(fioles[p],t)] != j:
+                        if fioles[j] not in collisionsJ[j]:
+                            collisionsJ[j].append(fioles[p])
+                            print(j,"JAI AJOUTE UNE COLLISION FIOLE")
+                            #print(collisionsJ)
+            
+
             print("DEBUT ITER = ",initStates[j])
-            p = Probleme(initStates[j],fioles[j],wallStates,'manhattan')
-            print(wallStates)
+
+            #p = Probleme(initStates[j],fioles[j],wallStates,'manhattan')
+            p = Probleme(initStates[j],fioles[j],collisionsJ[j],'manhattan')
+            print("collisionsJ = ",collisionsJ[j])
+            print("wallstates = ", wallStates)
             listeTemporaire = astar(p)
             print(len(listeTemporaire))
             if(len(listeTemporaire)==1 and listeTemporaire[0].etat == fioles[j]):
                 c = listeTemporaire[0].etat
                 #next_row,next_col = c
-                reservations[(c,t)] = j
+                #reservations[(c,t)] = j
                 chemins[j].append(listeTemporaire[0])
+                for a in range(t,iterations):
+                    reservations[(c,a)] = j
                 break
             elif(len(listeTemporaire)==1 and listeTemporaire[0].etat != fioles[j]):
                 pause[j] = 1
@@ -213,7 +230,7 @@ def main():
 
             n = listeTemporaire[-2]
             c = n.etat
-            collisions = list(wallStates)
+            collisions = list(collisionsJ[j])
             if(pause[j] == 0): # Si pas de pause
                 print("PAUSE 0")
                 if reservations[(c,t+1)] != j and reservations[(c,t+1)] != -1: # Si case réservée

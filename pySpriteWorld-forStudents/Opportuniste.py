@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-# Nicolas, 2015-11-18
-
 from __future__ import absolute_import, print_function, unicode_literals
 from gameclass import Game,check_init_game_done
 from spritebuilder import SpriteBuilder
@@ -31,7 +27,7 @@ game = Game()
 def init(_boardname=None):
     global player,game
     # pathfindingWorld_MultiPlayer4
-    name = _boardname if _boardname is not None else 'pathfindingWorld_MultiPlayer1'
+    name = _boardname if _boardname is not None else 'pathfindingWorld_MultiPlayer2'
     game = Game('Cartes/' + name + '.json', SpriteBuilder)
     game.O = Ontology(True, 'SpriteSheet-32x32/tiny_spritesheet_ontology.csv')
     game.populate_sprite_names(game.O)
@@ -122,8 +118,9 @@ def main():
         for j in range(nbPlayers): # on fait bouger chaque joueur séquentiellement
             collisions = wallStates + initStates
             p = Probleme(initStates[j],fioles[j],collisions,'manhattan')
-            list = astar(p)
-            n = list[-2]
+            listeTemporaire = astar(p)
+            #print("Vraie distance = ",len(listeTemporaire))
+            n = listeTemporaire[-2]
             next_row,next_col = n.etat
             players[j].set_rowcol(next_row,next_col)
             print ("pos :", j, next_row,next_col)

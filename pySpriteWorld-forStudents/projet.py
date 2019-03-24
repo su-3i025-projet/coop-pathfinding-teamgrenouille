@@ -25,6 +25,18 @@ def distManhattan(p1,p2):
     (x2,y2)=p2
     return abs(x1-x2)+abs(y1-y2)
 
+def trueDistance():
+    """ calcule la vraie distance :
+        la plus courte distance jusqu'à la destination
+        en prenant au compte les obstacles
+        mais ignore les autres joueurs.
+        Plus exactement la longueur du chemin (optimal)
+        donné par A*
+        En d'autres termes : la distance d'un chemin "normal"
+        que l'algorithme pourrait donné pour la destination
+        """
+
+
 ###############################################################################
 
 class Probleme():
@@ -88,7 +100,20 @@ class Probleme():
             h = distManhattan(e1,e2)
         elif self.heuristique=='uniform':
             h = 1
+        elif self.heuristique=='trueDistance':
+            h = trueDistance
         return h
+
+
+    '''
+    def h_valueTD(self,e1,e2,p):
+        #p = Probleme(initStates[j],fioles[j],collisions,'manhattan')
+        listeTemporaire = astar(p)
+        res = len(listeTemporaire) - 1
+        print("totot")
+        return res
+    '''
+
 
 ###############################################################################
 
@@ -172,6 +197,34 @@ def astar(p):
             nouveauxNoeuds = bestNoeud.expand(p)
             for n in nouveauxNoeuds:
                 f = n.g+p.h_value(n.etat,p.but)
+                heapq.heappush(frontiere, (f,n))
+    solutions = bestNoeud.traceRes(p)
+            
+    return solutions
+
+###############################################################################
+
+def astarTD(p): # CATASTROPHIQUE
+    """ application de l'algorithme a-star sur un probleme donné
+        """
+    nodeInit = Noeud(p.init,0,None)
+    frontiere = [(nodeInit.g+p.h_valueTD(nodeInit.etat,p.but,p),nodeInit)] 
+    reserve = {}        
+    bestNoeud = nodeInit
+    solutions = []
+
+    while frontiere != [] and not p.estBut(bestNoeud.etat):           
+        (min_f,bestNoeud) = heapq.heappop(frontiere)   
+        
+    # Suppose qu'un noeud en réserve n'est jamais ré-étendu 
+    # Hypothèse de consistence de l'heuristique
+    # ne gère pas les duplicatas dans la frontière
+    
+        if p.immatriculation(bestNoeud.etat) not in reserve:            
+            reserve[p.immatriculation(bestNoeud.etat)] = bestNoeud.g #maj de reserve
+            nouveauxNoeuds = bestNoeud.expand(p)
+            for n in nouveauxNoeuds:
+                f = n.g+p.h_valueTD(n.etat,p.but,p)
                 heapq.heappush(frontiere, (f,n))
     solutions = bestNoeud.traceRes(p)
             
