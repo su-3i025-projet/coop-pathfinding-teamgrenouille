@@ -35,6 +35,7 @@ def trueDistance():
         En d'autres termes : la distance d'un chemin "normal"
         que l'algorithme pourrait donné pour la destination
         """
+    pass
 
 
 ###############################################################################
